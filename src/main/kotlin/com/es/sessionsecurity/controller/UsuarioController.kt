@@ -2,6 +2,7 @@ package com.es.sessionsecurity.controller
 
 import com.es.sessionsecurity.model.Usuario
 import com.es.sessionsecurity.service.UsuarioService
+import jakarta.servlet.http.Cookie
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
@@ -34,6 +35,8 @@ class UsuarioController {
             b) Hay una clase especializada en la gestión de cookies -> Clase Cookie
          */
 
+        val cookie: Cookie = Cookie("tokenSession", token)
+
 
         // 3 INSERTAR LA COOKIE EN LA RESPUESTA
         /*
@@ -41,9 +44,20 @@ class UsuarioController {
             b) Esta cookie la almacenará automáticamente el cliente
          */
 
+        respuesta.addCookie(cookie)
+
 
         // RESPUESTA
         return ResponseEntity(mapOf("message" to "login correcto"), HttpStatus.OK)
 
+    }
+
+    @PostMapping("/register")
+    fun register(
+        @RequestBody nuevoUsuario: Usuario
+    ): ResponseEntity<Usuario>{
+        val usuario = usuarioService.insert(nuevoUsuario)
+
+        return ResponseEntity<Usuario>(usuario, HttpStatus.OK)
     }
 }
